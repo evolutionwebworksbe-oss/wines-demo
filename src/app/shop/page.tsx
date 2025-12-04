@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { mockWines } from '@/lib/mock-wines';
 import type { Wine, WineCategory } from '@/types/wine';
 
-export default function ShopPage() {
+// Separate the component that uses useSearchParams
+function ShopContent() {
   const searchParams = useSearchParams();
   const [filteredWines, setFilteredWines] = useState<Wine[]>(mockWines);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -250,5 +251,21 @@ export default function ShopPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+export default function ShopPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🍷</div>
+          <p className="text-wine-600">Wijnen laden...</p>
+        </div>
+      </div>
+    }>
+      <ShopContent />
+    </Suspense>
   );
 }
